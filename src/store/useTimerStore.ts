@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { TimerMode, TimerStatus } from '@/types';
+import { SoundType } from '@/hooks/useSound';
 
 interface TimerStore {
   // 状态
@@ -17,8 +18,16 @@ interface TimerStore {
   autoStartBreaks: boolean;
   autoStartFocus: boolean;
 
+  // V1.1 新增设置
+  soundEffect: SoundType;
+  soundEnabled: boolean;
+  notificationEnabled: boolean;
+
   // Worker 引用
   worker: Worker | null;
+
+  // 回调函数（用于音频和通知）
+  onComplete?: () => void;
 
   // 操作
   setStatus: (status: TimerStatus) => void;
@@ -35,6 +44,11 @@ interface TimerStore {
   setAutoStartBreaks: (auto: boolean) => void;
   setAutoStartFocus: (auto: boolean) => void;
 
+  // V1.1 设置更新
+  setSoundEffect: (sound: SoundType) => void;
+  setSoundEnabled: (enabled: boolean) => void;
+  setNotificationEnabled: (enabled: boolean) => void;
+
   // 计时器控制
   startTimer: () => void;
   pauseTimer: () => void;
@@ -44,6 +58,9 @@ interface TimerStore {
   // Worker 管理
   initWorker: () => void;
   terminateWorker: () => void;
+
+  // 回调管理
+  setOnComplete: (callback: () => void) => void;
 
   // 模式切换
   switchMode: (mode: TimerMode) => void;
@@ -67,8 +84,16 @@ export const useTimerStore = create<TimerStore>()(
       autoStartBreaks: false,
       autoStartFocus: false,
 
+      // V1.1 默认设置
+      soundEffect: 'bell',
+      soundEnabled: true,
+      notificationEnabled: false,
+
       // Worker 引用
       worker: null,
+
+      // 回调函数
+      onComplete: undefined,
 
       // 状态更新
       setStatus: (status) => set({ status }),
@@ -100,6 +125,11 @@ export const useTimerStore = create<TimerStore>()(
       setLongBreakInterval: (interval) => set({ longBreakInterval: interval }),
       setAutoStartBreaks: (auto) => set({ autoStartBreaks: auto }),
       setAutoStartFocus: (auto) => set({ autoStartFocus: auto }),
+
+      // V1.1 设置更新
+      setSoundEffect: (sound) => set({ soundEffect: sound }),
+      setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),
+      setNotificationEnabled: (enabled) => set({ notificationEnabled: enabled }),
 
       // 计时器控制
       startTimer: () => {
@@ -174,15 +204,17 @@ export const useTimerStore = create<TimerStore>()(
 
             case 'COMPLETE':
               set({ status: 'idle' });
-              const { mode, completedPomodoros, longBreakInterval } = get();
+              const currentMode = get().mode;
+              const { completedPomodoros } = get();
 
-              if (mode === 'focus') {
+              if (currentMode === 'focus') {
                 set({ completedPomodoros: completedPomodoros + 1 });
-                // 播放提示音
-                if (typeof Audio !== 'undefined') {
-                  const audio = new Audio('/sounds/bell.mp3');
-                  audio.play().catch(() => {});
-                }
+              }
+
+              // 触发完成回调（音频和通知）
+              const { onComplete } = get();
+              if (onComplete) {
+                onComplete();
               }
 
               // 自动切换到下一个模式
@@ -191,8 +223,8 @@ export const useTimerStore = create<TimerStore>()(
 
               // 自动开始下一个计时器
               if (
-                (mode === 'focus' && get().autoStartBreaks) ||
-                (mode !== 'focus' && get().autoStartFocus)
+                (currentMode === 'focus' && get().autoStartBreaks) ||
+                (currentMode !== 'focus' && get().autoStartFocus)
               ) {
                 setTimeout(() => get().startTimer(), 1000);
               }
@@ -212,6 +244,9 @@ export const useTimerStore = create<TimerStore>()(
         worker?.terminate();
         set({ worker: null });
       },
+
+      // 回调管理
+      setOnComplete: (callback) => set({ onComplete: callback }),
 
       // 模式切换
       switchMode: (mode) => {
@@ -255,6 +290,9 @@ export const useTimerStore = create<TimerStore>()(
         autoStartBreaks: state.autoStartBreaks,
         autoStartFocus: state.autoStartFocus,
         completedPomodoros: state.completedPomodoros,
+        soundEffect: state.soundEffect,
+        soundEnabled: state.soundEnabled,
+        notificationEnabled: state.notificationEnabled,
       }),
     }
   )

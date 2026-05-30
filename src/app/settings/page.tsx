@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useTimerStore } from '@/store/useTimerStore';
+import { ThemeSelector } from '@/components/settings/ThemeSelector';
+import { SoundSelector } from '@/components/settings/SoundSelector';
+import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { Settings, Clock, RotateCcw, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -138,6 +141,21 @@ export default function SettingsPage() {
               <span className="text-sm">休息结束后自动开始专注</span>
             </label>
           </div>
+        </div>
+
+        {/* 提示音设置 */}
+        <div className="p-6 bg-card rounded-2xl border border-border">
+          <SoundSelector />
+        </div>
+
+        {/* 通知设置 */}
+        <div className="p-6 bg-card rounded-2xl border border-border">
+          <NotificationSettings />
+        </div>
+
+        {/* 主题设置 */}
+        <div className="p-6 bg-card rounded-2xl border border-border">
+          <ThemeSelector />
         </div>
 
         {/* 操作按钮 */}
