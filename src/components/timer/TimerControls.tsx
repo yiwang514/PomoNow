@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTimerStore } from '@/store/useTimerStore';
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function TimerControls() {
   const [mounted, setMounted] = useState(false);
-  const { status, startTimer, pauseTimer, resetTimer, skipTimer } =
+  const { status, mode, startTimer, pauseTimer, resetTimer, skipTimer } =
     useTimerStore();
 
   useEffect(() => {
@@ -35,29 +36,45 @@ export function TimerControls() {
 
   if (!mounted) {
     return (
-      <div className="flex items-center justify-center gap-4">
-        <Button size="lg" className="w-32 h-12 text-lg">
+      <div className="flex items-center justify-center gap-6">
+        <Button
+          size="lg"
+          className="w-40 h-14 text-lg font-medium rounded-2xl btn-hover-lift"
+        >
           <Play className="mr-2 h-5 w-5" />
-          开始
+          开始专注
         </Button>
       </div>
     );
   }
 
+  const modeColors = {
+    focus: 'bg-primary hover:bg-primary/90',
+    shortBreak: 'bg-green-600 hover:bg-green-700',
+    longBreak: 'bg-blue-600 hover:bg-blue-700',
+  };
+
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-6">
+      {/* 重置按钮 */}
       <Button
-        variant="outline"
+        variant="ghost"
         size="icon"
         onClick={resetTimer}
         title="重置 (Esc)"
+        className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
       >
-        <RotateCcw className="h-4 w-4" />
+        <RotateCcw className="h-5 w-5" />
       </Button>
 
+      {/* 主按钮 */}
       <Button
         size="lg"
-        className="w-32 h-12 text-lg"
+        className={cn(
+          "w-40 h-14 text-lg font-medium rounded-2xl btn-hover-lift shadow-lg",
+          modeColors[mode],
+          status === 'running' && 'shadow-xl'
+        )}
         onClick={() => {
           if (status === 'running') {
             pauseTimer();
@@ -74,18 +91,20 @@ export function TimerControls() {
         ) : (
           <>
             <Play className="mr-2 h-5 w-5" />
-            {status === 'paused' ? '继续' : '开始'}
+            {status === 'paused' ? '继续' : '开始专注'}
           </>
         )}
       </Button>
 
+      {/* 跳过按钮 */}
       <Button
-        variant="outline"
+        variant="ghost"
         size="icon"
         onClick={skipTimer}
         title="跳过"
+        className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
       >
-        <SkipForward className="h-4 w-4" />
+        <SkipForward className="h-5 w-5" />
       </Button>
     </div>
   );
