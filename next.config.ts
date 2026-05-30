@@ -1,13 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',  // 启用静态导出
-  images: {
-    unoptimized: true,  // GitHub Pages 不支持图片优化
-  },
-  trailingSlash: true,  // GitHub Pages 需要尾部斜杠
-  basePath: '/PomoNow',  // GitHub Pages 仓库名
-  assetPrefix: '/PomoNow/',  // 静态资源前缀
+  // Vercel 部署不需要静态导出
+  // 移除 output: 'export'
+  // 移除 basePath 和 assetPrefix
 };
 
 export default nextConfig;
