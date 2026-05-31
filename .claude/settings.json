@@ -6,7 +6,8 @@
       "Bash(git commit -m '@ *)",
       "Bash(git push *)",
       "Bash(git pull *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(git commit -m '@fix: 彻底清理 GitHub Pages 残留配置 *)"
     ]
   }
 }
