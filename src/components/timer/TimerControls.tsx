@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTimerStore } from '@/store/useTimerStore';
-import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function TimerControls() {
   const [mounted, setMounted] = useState(false);
-  const { status, mode, startTimer, pauseTimer, resetTimer, skipTimer } =
+  const { status, mode, startTimer, pauseTimer, resetTimer } =
     useTimerStore();
 
   useEffect(() => {
@@ -94,17 +94,6 @@ export function TimerControls() {
             {status === 'paused' ? '继续' : '开始专注'}
           </>
         )}
-      </Button>
-
-      {/* 跳过按钮 */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={skipTimer}
-        title="跳过"
-        className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
-      >
-        <SkipForward className="h-5 w-5" />
       </Button>
     </div>
   );

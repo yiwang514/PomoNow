@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Timer, ListTodo, BarChart3, Settings, Menu, X } from 'lucide-react';
+import { Timer, ListTodo, BarChart3, Settings, Menu, X, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTimerStore } from '@/store/useTimerStore';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -16,8 +17,12 @@ const navItems = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const { status } = useTimerStore();
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // 计时器运行时禁止切换页面
+  const isTimerRunning = status === 'running';
 
   useEffect(() => {
     setMounted(true);
@@ -53,7 +58,23 @@ export function Navbar() {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
-              return (
+              // 计时器运行时，非当前页面的导航被禁用
+              const isDisabled = isTimerRunning && pathname !== item.href;
+
+              return isDisabled ? (
+                <div
+                  key={item.href}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium",
+                    "text-muted-foreground/50 cursor-not-allowed"
+                  )}
+                  title="计时器运行中，请先暂停"
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                  <Lock className="h-3 w-3" />
+                </div>
+              ) : (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -93,7 +114,22 @@ export function Navbar() {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
-                return (
+                const isDisabled = isTimerRunning && pathname !== item.href;
+
+                return isDisabled ? (
+                  <div
+                    key={item.href}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium",
+                      "text-muted-foreground/50 cursor-not-allowed"
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                    {item.label}
+                    <Lock className="h-3 w-3 ml-auto" />
+                    <span className="text-xs">请先暂停</span>
+                  </div>
+                ) : (
                   <Link
                     key={item.href}
                     href={item.href}
