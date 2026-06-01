@@ -11,7 +11,8 @@
       "Bash(git commit -m '@feat: 添加提前完成按钮，专注时间小于10秒不记录 *)",
       "Bash(git commit -m '@feat: 优化专注流程，添加提前完成按钮 *)",
       "Bash(git commit -m '@fix: 修复导航锁定、模式选择和提前完成 *)",
-      "Bash(git commit -m '@fix: 修复暂停状态下的任务操作 *)"
+      "Bash(git commit -m '@fix: 修复暂停状态下的任务操作 *)",
+      "Bash(git commit -m '@feat: 添加任务自定义专注时长功能 *)"
     ]
   }
 }

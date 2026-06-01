@@ -24,6 +24,7 @@ export interface Task {
   title: string;
   estimatedTomatoes: number; // 预估番茄数
   actualTomatoes: number; // 实际完成番茄数
+  focusDuration: number; // 单次专注时长（分钟）
   isCompleted: boolean;
   createdAt: string;
 }

@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Trash2, CheckCircle2, Circle, Zap, Cherry, Play, Pause } from 'lucide-react';
+import { Trash2, CheckCircle2, Circle, Zap, Cherry, Play, Pause, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TaskItemProps {
@@ -38,8 +38,14 @@ export function TaskItem({ task }: TaskItemProps) {
       // 如果已经是活动任务（运行中或暂停），只跳转不重置
       router.push('/');
     } else {
-      // 设置为当前活动任务并跳转
+      // 设置为当前活动任务
       setActiveTask(task.id);
+      // 设置计时器为任务的专注时长
+      useTimerStore.setState({
+        timeLeft: task.focusDuration * 60,
+        focusDuration: task.focusDuration,
+      });
+      // 跳转到专注页面
       router.push('/');
     }
   };
@@ -125,6 +131,10 @@ export function TaskItem({ task }: TaskItemProps) {
             {task.title}
           </p>
           <div className="flex items-center gap-3 mt-1">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>{task.focusDuration}分钟</span>
+            </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Cherry className="h-3 w-3" />
               <span>预估 {task.estimatedTomatoes}</span>

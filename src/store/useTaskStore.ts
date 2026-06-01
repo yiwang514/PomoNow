@@ -17,7 +17,7 @@ interface TaskStore {
   focusHistory: FocusRecord[]; // V1.1: 专注历史记录
 
   // 任务操作
-  addTask: (title: string, estimatedTomatoes?: number) => void;
+  addTask: (title: string, estimatedTomatoes?: number, focusDuration?: number) => void;
   removeTask: (id: string) => void;
   toggleTask: (id: string) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
@@ -42,12 +42,13 @@ export const useTaskStore = create<TaskStore>()(
       focusHistory: [],
 
       // 任务操作
-      addTask: (title, estimatedTomatoes = 1) => {
+      addTask: (title, estimatedTomatoes = 1, focusDuration = 25) => {
         const newTask: Task = {
           id: crypto.randomUUID(),
           title,
           estimatedTomatoes,
           actualTomatoes: 0,
+          focusDuration,
           isCompleted: false,
           createdAt: new Date().toISOString(),
         };
